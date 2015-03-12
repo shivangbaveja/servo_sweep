@@ -11,34 +11,56 @@ int main(void)
 {
 	TIM4_Configuration();
 	PWM_Output_Configuration();
+	int flag=0;
+
+	//setting PWM pulses on PA6
+//	TIM_SetCompare1(TIM3,1500);
     while(1)
     {
     	time_now = TIM_GetCounter(TIM4);
     	if(time_now < old_time)
 		{
-			if((time_now + 50000 - old_time) > 20000)
+			if((time_now + 50000 - old_time) > 14000)
 			{
 				old_time = time_now;
-				//TIM_SetCompare1(TIM3,1150);
+				if(flag==0)
+				{
+					TIM_SetCompare1(TIM3,1150);
+					flag=1;
+				}
+				else
+				{
+					TIM_SetCompare1(TIM3,1850);
+					flag=0;
+				}
 			}
 		}
 		else
 		{
-			if((time_now - old_time) > 20000)
+			if((time_now - old_time) > 14000)
 			{
 				old_time = time_now;
-				//TIM_SetCompare1(TIM3,1850);
+				if(flag==0)
+				{
+					TIM_SetCompare1(TIM3,1150);
+					flag=1;
+				}
+				else
+				{
+					TIM_SetCompare1(TIM3,1850);
+					flag=0;
+				}
 			}
 	  }
     }
 }
-void TIM_Configuration(void)
+void TIM4_Configuration(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
 
 	TIM_TimeBaseStructure.TIM_Period=50000;
-	TIM_TimeBaseStructure.TIM_Prescaler= (7200-1);
+	TIM_TimeBaseStructure.TIM_Prescaler= (36000-1);
 	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
